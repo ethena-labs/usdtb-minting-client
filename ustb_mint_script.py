@@ -18,6 +18,7 @@ WEB3_URL = os.getenv('WEB3_URL')
 USTB_TOKEN_ADDRESS = os.getenv('USTB_TOKEN_ADDRESS')
 USTB_MINTING_ADDRESS = os.getenv('USTB_MINTING_CONTRACT_ADDRESS')
 
+
 class SignatureType(IntEnum):
     EIP712 = 0
     EIP1271 = 1
@@ -29,8 +30,13 @@ class Signature:
     signature_bytes: bytes
 
 
+# production
 ustb_public_url = ' https://public.api.ustb.money/'
 ustb_private_url = ' https://private.api.ustb.money/'
+
+# staging
+ustb_public_url_staging = ' https://public.api.staging.ustb.money/'
+ustb_private_url_staging = ' https://private.api.staging.ustb.money/'
 
 if __name__ == "__main__":
     with open('ustb_mint_abi.json') as f:
