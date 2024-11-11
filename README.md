@@ -1,1 +1,3 @@
-# ustb-minting-client
+# UStb Minting
+
+UStb Market Maker RFQ Minting Reference Client
