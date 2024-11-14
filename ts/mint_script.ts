@@ -8,7 +8,7 @@ import { MINT_ADDRESS } from "./constants";
 import { Side } from "./types";
 
 // Configuration
-const AMOUNT: number = 25; // Amount in USD
+const AMOUNT: number = 35; // Amount in USD
 const COLLATERAL_ASSET: "BUIDL" | "USDC" = "USDC";
 const BENEFACTOR: Address =
   "0x3Aa3Fd1B762CaC519D405297CE630beD30430b00" as Address; // Replace with your address

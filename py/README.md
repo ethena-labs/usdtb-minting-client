@@ -30,5 +30,5 @@ $ source venv/bin/activate
 
 ```
 $ This will run the mint.
-$ ./py/mint_script.py
+$ ./py/ustb_mint_script.py
 ```

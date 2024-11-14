@@ -4,7 +4,7 @@ This repository contains SDKs for interacting with UStb.
 
 ## Overview
 
-The SDKs provide functionality for both minting and redeeming USUStbDe.
+The SDKs provide functionality for both minting and redeeming UStb.
 
 ## Available SDKs
 
