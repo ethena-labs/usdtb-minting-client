@@ -6,8 +6,6 @@ This repository contains SDKs for interacting with UStb.
 
 The SDKs provide functionality for both minting and redeeming UStb.
 
-## Available SDKs
-
 ### Python SDK
 
 Located in the `/py` directory, the Python SDK provides a simple interface for minting and redeeming UStb tokens. See the Python [README](./py/README.md) for setup and usage instructions.
