@@ -41,10 +41,10 @@ ustb_public_url_staging = " https://public.api.staging.ustb.money/"
 ustb_private_url_staging = " https://private.api.staging.ustb.money/"
 
 if __name__ == "__main__":
-    with open("py/ustb_mint_abi.json", encoding="utf-8") as f:
+    with open("ustb_mint_abi.json", encoding="utf-8") as f:
         mint_abi = json.load(f)
 
-    with open("py/ustb_token_abi.json", encoding="utf-8") as f:
+    with open("ustb_token_abi.json", encoding="utf-8") as f:
         ustb_abi = json.load(f)
 
     w3 = Web3(Web3.HTTPProvider(WEB3_URL))
@@ -56,7 +56,8 @@ if __name__ == "__main__":
     buidl_address = "0x7712c34205737192402172409a8F7ccef8aA2AEc"
 
     type_ = "ALGO"
-    rfq_url = f"{ustb_public_url_staging}rfq?pair=USDC/UStb&type_={type_}&side=MINT&size=35"
+    side = "MINT"
+    rfq_url = f"{ustb_public_url_staging}rfq?pair=USDC/UStb&type_={type_}&side={side}&size=25"
     response = requests.get(rfq_url, timeout=5)
     rfq_data = response.json()
 
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     # order object sent back to /order endpoint
     mint_order = {
         "order_id": str(rfq_data["rfq_id"]),
-        "order_type": "MINT",
+        "order_type": side,
         "expiry": int(time.time() + 60),
         "nonce": int(time.time() + 60),
         "benefactor": acc.address,
