@@ -133,7 +133,7 @@ def main():
         response = requests.post(order_url, json=mint_order, timeout=60)
         response_data = response.json()
         if response.status_code != 200:
-            logging.error(f"HTTP error: {response.status_code} - {response_data}")
+            logging.error(f"Issue submitting order: HTTP {response.status_code}: {response_data['error']}")
         else:
             tx_id = response_data["tx"]
             logging.info(f"Transaction submitted: https://etherscan.io/tx/{tx_id}")
