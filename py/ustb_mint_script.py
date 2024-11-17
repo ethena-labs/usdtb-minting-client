@@ -21,7 +21,7 @@ load_dotenv(env_path)
 
 # Constants
 PRIVATE_KEY = os.getenv("PRIVATE_KEY")
-WEB3_URL = os.getenv("RPC_URL")
+RPC_URL = os.getenv("RPC_URL")
 USTB_MINTING_ADDRESS = "0x4a6B08f7d49a507778Af6FB7eebaE4ce108C981E" # staging contract address
 USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
 BUIDL_ADDRESS = "0x7712c34205737192402172409a8f7ccef8aa2aec"
@@ -103,7 +103,7 @@ def sign_order(w3, mint_order, acc, ustb_minting_contract):
 
 def main():
     logging.info("Starting USTB minting script...")
-    if not all([PRIVATE_KEY, WEB3_URL]):
+    if not all([PRIVATE_KEY, RPC_URL]):
         logging.error("Missing environment variables. Please check your .env file.")
         return
     if not COLLATERAL_ASSET in ["USDC", "BUIDL"]:
@@ -112,7 +112,7 @@ def main():
 
     mint_abi = load_abi("ustb_mint_abi.json")
 
-    w3 = Web3(Web3.HTTPProvider(WEB3_URL))
+    w3 = Web3(Web3.HTTPProvider(RPC_URL))
     ustb_minting_contract = w3.eth.contract(address=Web3.to_checksum_address(USTB_MINTING_ADDRESS), abi=mint_abi)
 
     rfq_url = f"{USTB_PUBLIC_URL_STAGING}rfq?pair={COLLATERAL_ASSET}/UStb&type_=ALGO&side=MINT&size=25"
