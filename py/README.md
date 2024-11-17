@@ -6,29 +6,32 @@ Example scripts interacting with UStb Minting API
 
 ## Prepare .env file
 
+1. Create a `.env` file in the root directory:
+
 ```
 $ cp .env.example .env
-# Edit .env file with your credentials. These will be loaded into environment variables on start.
 ```
+
+2. Edit the `.env` file with your credentials. These will be loaded into environment variables on start.
 
 ## Install Python
 
-Tested under Python 3.11.
+1. Install Python 3.11
+2. Create and activate a self-contained Python environment:
 
 ```
-# Create self-contained Python environment:
-$ python -m venv myenv
-# Activate the environment:
+$ python3 -m venv venv
 $ source venv/bin/activate
-# Check version = 3.11
-(venv) $ python3 --version
-# Install requirements
+```
+
+3. Install requirements:
+
+```
 (venv) $ pip install -r requirements.txt
 ```
 
 ## Run mint
 
 ```
-$ This will run the mint.
-$ ./py/ustb_mint_script.py
+(venv) $ python3 ./py/ustb_mint_script.py
 ```
