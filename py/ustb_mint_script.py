@@ -24,6 +24,8 @@ PRIVATE_KEY = os.getenv("PRIVATE_KEY")
 WEB3_URL = os.getenv("RPC_URL")
 USTB_MINTING_ADDRESS = "0x4a6B08f7d49a507778Af6FB7eebaE4ce108C981E" # staging contract address
 USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+BUIDL_ADDRESS = "0x7712c34205737192402172409a8f7ccef8aa2aec"
+COLLATERAL_ASSET = "USDC"
 
 # URLs
 USTB_PUBLIC_URL = "https://public.api.ustb.money/"
@@ -53,7 +55,7 @@ def get_rfq_data(url):
         logging.error(f"Error fetching RFQ data: {e}")
         return None
 
-def create_mint_order(rfq_data, acc, usdc_address):
+def create_mint_order(rfq_data, acc, collateral_asset_address):
     logging.info("Creating mint order...")
     return {
         "order_id": str(rfq_data["rfq_id"]),
@@ -62,7 +64,7 @@ def create_mint_order(rfq_data, acc, usdc_address):
         "nonce": int(time.time() + 60),
         "benefactor": acc.address,
         "beneficiary": acc.address,
-        "collateral_asset": usdc_address,
+        "collateral_asset": collateral_asset_address,
         "collateral_amount": int(rfq_data["collateral_amount"]),
         "ustb_amount": int(rfq_data["ustb_amount"]),
     }
@@ -90,27 +92,30 @@ def main():
     if not all([PRIVATE_KEY, WEB3_URL]):
         logging.error("Missing environment variables. Please check your .env file.")
         return
+    if not COLLATERAL_ASSET in ["USDC", "BUIDL"]:
+        logging.error("Invalid COLLATERAL_ASSET.")
+        return
 
     mint_abi = load_abi("ustb_mint_abi.json")
 
     w3 = Web3(Web3.HTTPProvider(WEB3_URL))
     ustb_minting_contract = w3.eth.contract(address=Web3.to_checksum_address(USTB_MINTING_ADDRESS), abi=mint_abi)
 
-    rfq_url = f"{USTB_PUBLIC_URL_STAGING}rfq?pair=USDC/UStb&type_=ALGO&side=MINT&size=25"
+    rfq_url = f"{USTB_PUBLIC_URL_STAGING}rfq?pair={COLLATERAL_ASSET}/UStb&type_=ALGO&side=MINT&size=25"
     rfq_data = get_rfq_data(rfq_url)
 
     if rfq_data is None:
         return
 
     acc: LocalAccount = Account.from_key(PRIVATE_KEY)
-    mint_order = create_mint_order(rfq_data, acc, USDC_ADDRESS)
+    mint_order = create_mint_order(rfq_data, acc, COLLATERAL_ASSET == "USDC" and USDC_ADDRESS or BUIDL_ADDRESS)
     signature = sign_order(w3, mint_order, acc, ustb_minting_contract)
 
     signature_hex = to_hex(signature.signature_bytes)
     order_url = f"{USTB_PUBLIC_URL_STAGING}order?signature={signature_hex}"
 
     try:
-        logging.info("Submitting order...")
+        logging.info(f"Submitting order: {mint_order}")
         response = requests.post(order_url, json=mint_order, timeout=60)
         response_data = response.json()
         if response.status_code != 200:
