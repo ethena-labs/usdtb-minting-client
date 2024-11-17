@@ -69,11 +69,25 @@ def create_mint_order(rfq_data, acc, collateral_asset_address):
         "ustb_amount": int(rfq_data["ustb_amount"]),
     }
 
+"""
+Signs an order using the provided account and returns the signature. EIP712 signature is used.
+    struct Order(
+        string  order_id,
+        uint8   order_type,
+        uint120 expiry,
+        uint128 nonce,
+        address benefactor,
+        address beneficiary,
+        address collateral_asset,
+        uint128 collateral_amount,
+        uint128 ustb_amount
+    )
+"""
 def sign_order(w3, mint_order, acc, ustb_minting_contract):
     logging.info("Signing order...")
     order_tuple = (
         str(mint_order["order_id"]),
-        0,
+        0 if mint_order["order_type"] == "MINT" else 1,
         mint_order["expiry"],
         mint_order["nonce"],
         w3.to_checksum_address(mint_order["benefactor"]),
