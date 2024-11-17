@@ -13,11 +13,11 @@ export const ORDER_TYPE = {
     { name: "ustb_amount", type: "uint128" },
   ],
 } as const;
-export const MINT_ADDRESS = "0x7f6Aef2d4B160dd2524fa57CFF9D661cB82779Fa";
+export const MINT_ADDRESS = "0x4a6B08f7d49a507778Af6FB7eebaE4ce108C981E";
 
 export const DOMAIN = {
   chainId: 1,
-  name: "EthenaUStbMinting",
+  name: "UStbMinting",
   verifyingContract: MINT_ADDRESS,
   version: "1",
 } as const;
