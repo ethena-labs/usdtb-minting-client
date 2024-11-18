@@ -16,9 +16,11 @@ pnpm i
 cp .env.example .env
 ```
 
-3. Set configuration in `mint_script.ts` - Specify the amount, collateral asset, benefactor, and side.
+4. Set configuration in `mint_script.ts` - Specify the amount, collateral asset, benefactor, and side.
 
-4. Run the script:
+5. Approve tokens to be spent by the minting contract.
+
+6. Run the script:
 
 ```bash
 pnpm mint

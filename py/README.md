@@ -30,6 +30,8 @@ $ source venv/bin/activate
 (venv) $ pip install -r requirements.txt
 ```
 
+4. Approve tokens to be spent by the minting contract.
+
 ## Run mint
 
 ```
