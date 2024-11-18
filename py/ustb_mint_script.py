@@ -26,6 +26,10 @@ USTB_MINTING_ADDRESS = "0x4a6B08f7d49a507778Af6FB7eebaE4ce108C981E" # staging co
 USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
 BUIDL_ADDRESS = "0x7712c34205737192402172409a8f7ccef8aa2aec"
 COLLATERAL_ASSET = "USDC"
+COLLATERAL_ASSET_ADDRESS = COLLATERAL_ASSET == "USDC" and USDC_ADDRESS or BUIDL_ADDRESS, PRIVATE_KEY
+AMOUNT = 25
+ALLOW_INFINITE_APPROVALS = True
+UINT256_MAX = 2 ** 256 - 1
 
 # URLs
 USTB_PUBLIC_URL = "https://public.api.ustb.money/"
@@ -54,6 +58,28 @@ def get_rfq_data(url):
     except requests.RequestException as e:
         logging.error(f"Error fetching RFQ data: {e}")
         return None
+
+def big_int_amount(amount: int):
+    return amount * (10 ** 6)
+
+def get_allowance(w3, collateral_address: str, private_key: str):
+    account = Account.from_key(PRIVATE_KEY)
+    erc20_abi = load_abi("erc20_abi.json")
+    allowance_contract = w3.eth.contract(address=Web3.to_checksum_address(collateral_address), abi=erc20_abi)
+
+    allowance = allowance_contract.functions.allowance(account.address, USTB_MINTING_ADDRESS).call()
+    return allowance
+
+def approve(w3, collateral_address: str, private_key: str, amount: int):
+    erc20_abi = load_abi("erc20_abi.json")
+    contract = w3.eth.contract(address=Web3.to_checksum_address(collateral_address), abi=erc20_abi)
+
+    transaction = contract.functions.approve(USTB_MINTING_ADDRESS, amount)
+
+    signed_tx = w3.eth.account.sign_transaction(transaction, private_key)
+    tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+
+    return tx_hash.hex()
 
 def create_mint_order(rfq_data, acc, collateral_asset_address):
     logging.info("Creating mint order...")
@@ -113,16 +139,26 @@ def main():
     mint_abi = load_abi("ustb_mint_abi.json")
 
     w3 = Web3(Web3.HTTPProvider(RPC_URL))
+
+    allowance = get_allowance(w3, COLLATERAL_ASSET_ADDRESS, PRIVATE_KEY)
+    logging.info(f"Allowance: {allowance}")
+
+    if allowance < big_int_amount(AMOUNT):
+        approval_amount = UINT256_MAX if ALLOW_INFINITE_APPROVALS else big_int_amount(AMOUNT)
+
+        tx_hash = approve(w3, COLLATERAL_ASSET_ADDRESS, PRIVATE_KEY, approval_amount)
+        print(f"Approval submitted: https://etherscan.io/tx/{tx_hash}")
+
     ustb_minting_contract = w3.eth.contract(address=Web3.to_checksum_address(USTB_MINTING_ADDRESS), abi=mint_abi)
 
-    rfq_url = f"{USTB_PUBLIC_URL_STAGING}rfq?pair={COLLATERAL_ASSET}/UStb&type_=ALGO&side=MINT&size=25"
+    rfq_url = f"{USTB_PUBLIC_URL_STAGING}rfq?pair={COLLATERAL_ASSET}/UStb&type_=ALGO&side=MINT&size={AMOUNT}"
     rfq_data = get_rfq_data(rfq_url)
 
     if rfq_data is None:
         return
 
     acc: LocalAccount = Account.from_key(PRIVATE_KEY)
-    mint_order = create_mint_order(rfq_data, acc, COLLATERAL_ASSET == "USDC" and USDC_ADDRESS or BUIDL_ADDRESS)
+    mint_order = create_mint_order(rfq_data, acc, COLLATERAL_ASSET_ADDRESS)
     signature = sign_order(w3, mint_order, acc, ustb_minting_contract)
 
     signature_hex = to_hex(signature.signature_bytes)

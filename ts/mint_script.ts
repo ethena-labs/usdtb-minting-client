@@ -1,6 +1,15 @@
 import { Address, createPublicClient, Hex, http } from "viem";
 import "dotenv/config";
-import { createMintOrder, getRfq, signOrder, submitOrder } from "./mint_utils";
+import {
+  createMintOrder,
+  getRfq,
+  signOrder,
+  submitOrder,
+  bigIntAmount,
+  UINT256_MAX,
+  getAllowance,
+  approve,
+} from "./mint_utils";
 import { USTB_MINTING_ABI } from "./minting_abi";
 import { mainnet } from "viem/chains";
 import { parseScientificOrNonScientificToBigInt } from "./parse_number";
@@ -15,6 +24,7 @@ const BENEFACTOR: Address =
 const SIDE: "MINT" | "REDEEM" = "MINT";
 
 const PRIVATE_KEY: Hex = process.env.PRIVATE_KEY as Hex;
+const ALLOW_INFINITE_APPROVALS = true;
 
 // Asset addresses
 const USDC_ADDRESS: Address = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
@@ -41,6 +51,21 @@ async function main() {
     );
 
     console.log("Order", order);
+
+    // Get allowance
+    const allowance = await getAllowance(collateralAddress, PRIVATE_KEY);
+    console.log("Allowance", allowance);
+
+    // Determine if approval required
+    if (allowance < bigIntAmount(AMOUNT)) {
+      // Approving
+      const txHash = await approve(
+        collateralAddress,
+        PRIVATE_KEY,
+        ALLOW_INFINITE_APPROVALS ? UINT256_MAX : bigIntAmount(AMOUNT)
+      );
+      console.log(`Approval submitted: https://etherscan.io/tx/${txHash}`);
+    }
 
     const orderSigning = {
       ...order,
