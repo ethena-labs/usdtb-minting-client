@@ -29,7 +29,6 @@ COLLATERAL_ASSET = "USDC"
 COLLATERAL_ASSET_ADDRESS = COLLATERAL_ASSET == "USDC" and USDC_ADDRESS or BUIDL_ADDRESS, PRIVATE_KEY
 AMOUNT = 25
 ALLOW_INFINITE_APPROVALS = True
-UINT256_MAX = 2 ** 256 - 1
 
 # URLs
 USTB_PUBLIC_URL = "https://public.api.ustb.money/"
@@ -144,7 +143,7 @@ def main():
     logging.info(f"Allowance: {allowance}")
 
     if allowance < big_int_amount(AMOUNT):
-        approval_amount = UINT256_MAX if ALLOW_INFINITE_APPROVALS else big_int_amount(AMOUNT)
+        approval_amount = big_int_amount(2) ** big_int_amount(256) - big_int_amount(1) if ALLOW_INFINITE_APPROVALS else big_int_amount(AMOUNT)
 
         tx_hash = approve(w3, COLLATERAL_ASSET_ADDRESS, PRIVATE_KEY, approval_amount)
         print(f"Approval submitted: https://etherscan.io/tx/{tx_hash}")
