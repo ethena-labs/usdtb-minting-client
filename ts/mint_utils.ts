@@ -5,7 +5,7 @@ import {
   createWalletClient,
   Hex,
   http,
-  erc20abi,
+  erc20Abi,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
@@ -112,7 +112,7 @@ export async function getAllowance(
 
   const allowance = await publicClient.readContract({
     address: collateralAddress,
-    abi: erc20abi,
+    abi: erc20Abi,
     functionName: "allowance",
     args: [address, MINT_ADDRESS],
   });
@@ -138,9 +138,9 @@ export async function approve(
   const { request } = await publicClient.simulateContract({
     account,
     address: collateralAddress,
-    abi: erc20abi,
+    abi: erc20Abi,
     functionName: "approve",
-    arguments: amount,
+    args: [MINT_ADDRESS, amount],
   });
 
   const txHash = await walletClient.writeContract(request);
