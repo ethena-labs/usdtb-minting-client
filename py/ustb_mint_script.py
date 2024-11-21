@@ -13,20 +13,25 @@ from eth_utils import to_hex, to_bytes
 from web3 import Web3
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='[%(asctime)s] [%(levelname)s] - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="[%(asctime)s] [%(levelname)s] - %(message)s"
+)
 
 # Load environment variables
 env_path = find_dotenv()
 load_dotenv(env_path)
 
 # Constants
-PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+PRIVATE_KEY = os.getenv("PRIVATE_KEY", "")
 RPC_URL = os.getenv("RPC_URL")
-USTB_MINTING_ADDRESS = "0x4a6B08f7d49a507778Af6FB7eebaE4ce108C981E" # staging contract address
+USTB_MINTING_ADDRESS = (
+    "0x4a6B08f7d49a507778Af6FB7eebaE4ce108C981E"  # staging contract address
+)
 USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
 BUIDL_ADDRESS = "0x7712c34205737192402172409a8f7ccef8aa2aec"
 COLLATERAL_ASSET = "USDC"
-COLLATERAL_ASSET_ADDRESS = COLLATERAL_ASSET == "USDC" and USDC_ADDRESS or BUIDL_ADDRESS, PRIVATE_KEY
+COLLATERAL_ASSET_ADDRESS = USDC_ADDRESS if COLLATERAL_ASSET == "USDC" else BUIDL_ADDRESS
+
 AMOUNT = 25
 ALLOW_INFINITE_APPROVALS = True
 
@@ -36,18 +41,27 @@ USTB_PRIVATE_URL = "https://private.api.ustb.money/"
 USTB_PUBLIC_URL_STAGING = "https://public.api.staging.ustb.money/"
 USTB_PRIVATE_URL_STAGING = "https://private.api.staging.ustb.money/"
 
+
+def load_abi(file_path):
+    with open(file_path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+ERC20_ABI = load_abi("py/erc20_abi.json")
+
+
 class SignatureType(IntEnum):
+    """Enumeration of supported signature types for minting."""
+
     EIP712 = 0
     EIP1271 = 1
+
 
 @dataclass(init=True, order=True)
 class Signature:
     signature_type: SignatureType
     signature_bytes: bytes
 
-def load_abi(file_path):
-    with open(file_path, encoding="utf-8") as f:
-        return json.load(f)
 
 def get_rfq_data(url):
     try:
@@ -58,20 +72,29 @@ def get_rfq_data(url):
         logging.error(f"Error fetching RFQ data: {e}")
         return None
 
+
 def big_int_amount(amount: int):
-    return amount * (10 ** 6)
+    return amount * (10**6)
 
-def get_allowance(w3, collateral_address: str, private_key: str):
+
+def get_allowance(w3, collateral_address: str):
+    # pylint: disable=no-value-for-parameter
     account = Account.from_key(PRIVATE_KEY)
-    erc20_abi = load_abi("erc20_abi.json")
-    allowance_contract = w3.eth.contract(address=Web3.to_checksum_address(collateral_address), abi=erc20_abi)
 
-    allowance = allowance_contract.functions.allowance(account.address, USTB_MINTING_ADDRESS).call()
+    allowance_contract = w3.eth.contract(
+        address=Web3.to_checksum_address(collateral_address), abi=ERC20_ABI
+    )
+
+    allowance = allowance_contract.functions.allowance(
+        account.address, USTB_MINTING_ADDRESS
+    ).call()
     return allowance
 
+
 def approve(w3, collateral_address: str, private_key: str, amount: int):
-    erc20_abi = load_abi("erc20_abi.json")
-    contract = w3.eth.contract(address=Web3.to_checksum_address(collateral_address), abi=erc20_abi)
+    contract = w3.eth.contract(
+        address=Web3.to_checksum_address(collateral_address), abi=ERC20_ABI
+    )
 
     transaction = contract.functions.approve(USTB_MINTING_ADDRESS, amount)
 
@@ -79,6 +102,7 @@ def approve(w3, collateral_address: str, private_key: str, amount: int):
     tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
 
     return tx_hash.hex()
+
 
 def create_mint_order(rfq_data, acc, collateral_asset_address):
     logging.info("Creating mint order...")
@@ -94,21 +118,22 @@ def create_mint_order(rfq_data, acc, collateral_asset_address):
         "ustb_amount": int(rfq_data["ustb_amount"]),
     }
 
-"""
-Signs an order using the provided account and returns the signature. EIP712 signature is used.
-    struct Order(
-        string  order_id,
-        uint8   order_type,
-        uint120 expiry,
-        uint128 nonce,
-        address benefactor,
-        address beneficiary,
-        address collateral_asset,
-        uint128 collateral_amount,
-        uint128 ustb_amount
-    )
-"""
+
 def sign_order(w3, mint_order, acc, ustb_minting_contract):
+    """
+    Signs an order using the provided account and returns the signature. EIP712 signature is used.
+        struct Order(
+            string  order_id,
+            uint8   order_type,
+            uint120 expiry,
+            uint128 nonce,
+            address benefactor,
+            address beneficiary,
+            address collateral_asset,
+            uint128 collateral_amount,
+            uint128 ustb_amount
+        )
+    """
     logging.info("Signing order...")
     order_tuple = (
         str(mint_order["order_id"]),
@@ -123,8 +148,11 @@ def sign_order(w3, mint_order, acc, ustb_minting_contract):
     )
     order_hash = ustb_minting_contract.functions.hashOrder(order_tuple).call()
     order_signed = acc.signHash(order_hash)
-    order_rsv = to_bytes(order_signed.r) + to_bytes(order_signed.s) + to_bytes(order_signed.v)
+    order_rsv = (
+        to_bytes(order_signed.r) + to_bytes(order_signed.s) + to_bytes(order_signed.v)
+    )
     return Signature(SignatureType.EIP712, order_rsv)
+
 
 def main():
     logging.info("Starting USTB minting script...")
@@ -135,20 +163,29 @@ def main():
         logging.error("Invalid COLLATERAL_ASSET.")
         return
 
-    mint_abi = load_abi("ustb_mint_abi.json")
+    mint_abi = load_abi("py/ustb_mint_abi.json")
 
     w3 = Web3(Web3.HTTPProvider(RPC_URL))
 
-    allowance = get_allowance(w3, COLLATERAL_ASSET_ADDRESS, PRIVATE_KEY)
+    allowance = get_allowance(w3, COLLATERAL_ASSET_ADDRESS)
     logging.info(f"Allowance: {allowance}")
 
     if allowance < big_int_amount(AMOUNT):
-        approval_amount = big_int_amount(2) ** big_int_amount(256) - big_int_amount(1) if ALLOW_INFINITE_APPROVALS else big_int_amount(AMOUNT)
+        print("ALLOWANCE IS LESS THAN AMOUNT")
+        approval_amount = (
+            big_int_amount(2) ** big_int_amount(256) - big_int_amount(1)
+            if ALLOW_INFINITE_APPROVALS
+            else big_int_amount(AMOUNT)
+        )
+
+        print("APPROVAL AMOUNT", approval_amount)
 
         tx_hash = approve(w3, COLLATERAL_ASSET_ADDRESS, PRIVATE_KEY, approval_amount)
         print(f"Approval submitted: https://etherscan.io/tx/{tx_hash}")
 
-    ustb_minting_contract = w3.eth.contract(address=Web3.to_checksum_address(USTB_MINTING_ADDRESS), abi=mint_abi)
+    ustb_minting_contract = w3.eth.contract(
+        address=Web3.to_checksum_address(USTB_MINTING_ADDRESS), abi=mint_abi
+    )
 
     rfq_url = f"{USTB_PUBLIC_URL_STAGING}rfq?pair={COLLATERAL_ASSET}/UStb&type_=ALGO&side=MINT&size={AMOUNT}"
     rfq_data = get_rfq_data(rfq_url)
@@ -156,6 +193,7 @@ def main():
     if rfq_data is None:
         return
 
+    # pylint: disable=no-value-for-parameter
     acc: LocalAccount = Account.from_key(PRIVATE_KEY)
     mint_order = create_mint_order(rfq_data, acc, COLLATERAL_ASSET_ADDRESS)
     signature = sign_order(w3, mint_order, acc, ustb_minting_contract)
@@ -168,12 +206,15 @@ def main():
         response = requests.post(order_url, json=mint_order, timeout=60)
         response_data = response.json()
         if response.status_code != 200:
-            logging.error(f"Issue submitting order: HTTP {response.status_code}: {response_data['error']}")
+            logging.error(
+                f"Issue submitting order: HTTP {response.status_code}: {response_data['error']}"
+            )
         else:
             tx_id = response_data["tx"]
             logging.info(f"Transaction submitted: https://etherscan.io/tx/{tx_id}")
     except requests.RequestException as e:
         logging.error(f"Error submitting order: {e}")
+
 
 if __name__ == "__main__":
     main()
