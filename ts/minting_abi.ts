@@ -5,7 +5,7 @@ export const USDTB_MINTING_ABI = [
       {
         components: [
           {
-            internalType: "enum IUStbMinting.TokenType",
+            internalType: "enum IUSDtbMinting.TokenType",
             name: "tokenType",
             type: "uint8",
           },
@@ -17,7 +17,7 @@ export const USDTB_MINTING_ABI = [
             type: "uint128",
           },
         ],
-        internalType: "struct IUStbMinting.TokenConfig[]",
+        internalType: "struct IUSDtbMinting.TokenConfig[]",
         name: "_tokenConfig",
         type: "tuple[]",
       },
@@ -34,7 +34,7 @@ export const USDTB_MINTING_ABI = [
             type: "uint128",
           },
         ],
-        internalType: "struct IUStbMinting.GlobalConfig",
+        internalType: "struct IUSDtbMinting.GlobalConfig",
         name: "_globalConfig",
         type: "tuple",
       },
@@ -62,7 +62,7 @@ export const USDTB_MINTING_ABI = [
   { inputs: [], name: "InvalidOrder", type: "error" },
   { inputs: [], name: "InvalidRoute", type: "error" },
   { inputs: [], name: "InvalidStablePrice", type: "error" },
-  { inputs: [], name: "InvalidUStbAddress", type: "error" },
+  { inputs: [], name: "InvalidUSDtbAddress", type: "error" },
   { inputs: [], name: "InvalidZeroAddress", type: "error" },
   { inputs: [], name: "MaxMintPerBlockExceeded", type: "error" },
   { inputs: [], name: "MaxRedeemPerBlockExceeded", type: "error" },
@@ -451,7 +451,7 @@ export const USDTB_MINTING_ABI = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "ustb_amount",
+        name: "usdtb_amount",
         type: "uint256",
       },
     ],
@@ -509,7 +509,7 @@ export const USDTB_MINTING_ABI = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "ustb_amount",
+        name: "usdtb_amount",
         type: "uint256",
       },
     ],
@@ -598,9 +598,14 @@ export const USDTB_MINTING_ABI = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: "address", name: "UStb", type: "address" },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "USDtb",
+        type: "address",
+      },
     ],
-    name: "UStbSet",
+    name: "USDtbSet",
     type: "event",
   },
   {
@@ -630,7 +635,7 @@ export const USDTB_MINTING_ABI = [
       {
         components: [
           {
-            internalType: "enum IUStbMinting.TokenType",
+            internalType: "enum IUSDtbMinting.TokenType",
             name: "tokenType",
             type: "uint8",
           },
@@ -642,7 +647,7 @@ export const USDTB_MINTING_ABI = [
             type: "uint128",
           },
         ],
-        internalType: "struct IUStbMinting.TokenConfig",
+        internalType: "struct IUSDtbMinting.TokenConfig",
         name: "_tokenConfig",
         type: "tuple",
       },
@@ -676,7 +681,7 @@ export const USDTB_MINTING_ABI = [
     name: "delegatedSigner",
     outputs: [
       {
-        internalType: "enum IUStbMinting.DelegatedSignerStatus",
+        internalType: "enum IUSDtbMinting.DelegatedSignerStatus",
         name: "",
         type: "uint8",
       },
@@ -697,7 +702,7 @@ export const USDTB_MINTING_ABI = [
         components: [
           { internalType: "string", name: "order_id", type: "string" },
           {
-            internalType: "enum IUStbMinting.OrderType",
+            internalType: "enum IUSDtbMinting.OrderType",
             name: "order_type",
             type: "uint8",
           },
@@ -715,9 +720,9 @@ export const USDTB_MINTING_ABI = [
             name: "collateral_amount",
             type: "uint128",
           },
-          { internalType: "uint128", name: "ustb_amount", type: "uint128" },
+          { internalType: "uint128", name: "usdtb_amount", type: "uint128" },
         ],
-        internalType: "struct IUStbMinting.Order",
+        internalType: "struct IUSDtbMinting.Order",
         name: "order",
         type: "tuple",
       },
@@ -785,7 +790,7 @@ export const USDTB_MINTING_ABI = [
         components: [
           { internalType: "string", name: "order_id", type: "string" },
           {
-            internalType: "enum IUStbMinting.OrderType",
+            internalType: "enum IUSDtbMinting.OrderType",
             name: "order_type",
             type: "uint8",
           },
@@ -803,9 +808,9 @@ export const USDTB_MINTING_ABI = [
             name: "collateral_amount",
             type: "uint128",
           },
-          { internalType: "uint128", name: "ustb_amount", type: "uint128" },
+          { internalType: "uint128", name: "usdtb_amount", type: "uint128" },
         ],
-        internalType: "struct IUStbMinting.Order",
+        internalType: "struct IUSDtbMinting.Order",
         name: "order",
         type: "tuple",
       },
@@ -852,7 +857,7 @@ export const USDTB_MINTING_ABI = [
         components: [
           { internalType: "string", name: "order_id", type: "string" },
           {
-            internalType: "enum IUStbMinting.OrderType",
+            internalType: "enum IUSDtbMinting.OrderType",
             name: "order_type",
             type: "uint8",
           },
@@ -870,9 +875,9 @@ export const USDTB_MINTING_ABI = [
             name: "collateral_amount",
             type: "uint128",
           },
-          { internalType: "uint128", name: "ustb_amount", type: "uint128" },
+          { internalType: "uint128", name: "usdtb_amount", type: "uint128" },
         ],
-        internalType: "struct IUStbMinting.Order",
+        internalType: "struct IUSDtbMinting.Order",
         name: "order",
         type: "tuple",
       },
@@ -881,20 +886,20 @@ export const USDTB_MINTING_ABI = [
           { internalType: "address[]", name: "addresses", type: "address[]" },
           { internalType: "uint128[]", name: "ratios", type: "uint128[]" },
         ],
-        internalType: "struct IUStbMinting.Route",
+        internalType: "struct IUSDtbMinting.Route",
         name: "route",
         type: "tuple",
       },
       {
         components: [
           {
-            internalType: "enum IUStbMinting.SignatureType",
+            internalType: "enum IUSDtbMinting.SignatureType",
             name: "signature_type",
             type: "uint8",
           },
           { internalType: "bytes", name: "signature_bytes", type: "bytes" },
         ],
-        internalType: "struct IUStbMinting.Signature",
+        internalType: "struct IUSDtbMinting.Signature",
         name: "signature",
         type: "tuple",
       },
@@ -917,7 +922,7 @@ export const USDTB_MINTING_ABI = [
         components: [
           { internalType: "string", name: "order_id", type: "string" },
           {
-            internalType: "enum IUStbMinting.OrderType",
+            internalType: "enum IUSDtbMinting.OrderType",
             name: "order_type",
             type: "uint8",
           },
@@ -935,22 +940,22 @@ export const USDTB_MINTING_ABI = [
             name: "collateral_amount",
             type: "uint128",
           },
-          { internalType: "uint128", name: "ustb_amount", type: "uint128" },
+          { internalType: "uint128", name: "usdtb_amount", type: "uint128" },
         ],
-        internalType: "struct IUStbMinting.Order",
+        internalType: "struct IUSDtbMinting.Order",
         name: "order",
         type: "tuple",
       },
       {
         components: [
           {
-            internalType: "enum IUStbMinting.SignatureType",
+            internalType: "enum IUSDtbMinting.SignatureType",
             name: "signature_type",
             type: "uint8",
           },
           { internalType: "bytes", name: "signature_bytes", type: "bytes" },
         ],
-        internalType: "struct IUStbMinting.Signature",
+        internalType: "struct IUSDtbMinting.Signature",
         name: "signature",
         type: "tuple",
       },
@@ -1109,7 +1114,7 @@ export const USDTB_MINTING_ABI = [
     inputs: [
       { internalType: "address", name: "asset", type: "address" },
       {
-        internalType: "enum IUStbMinting.TokenType",
+        internalType: "enum IUSDtbMinting.TokenType",
         name: "tokenType",
         type: "uint8",
       },
@@ -1121,9 +1126,9 @@ export const USDTB_MINTING_ABI = [
   },
   {
     inputs: [
-      { internalType: "contract IUStb", name: "_ustb", type: "address" },
+      { internalType: "contract IUSDtb", name: "_usdtb", type: "address" },
     ],
-    name: "setUStbToken",
+    name: "setUSDtbToken",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1147,7 +1152,7 @@ export const USDTB_MINTING_ABI = [
     name: "tokenConfig",
     outputs: [
       {
-        internalType: "enum IUStbMinting.TokenType",
+        internalType: "enum IUSDtbMinting.TokenType",
         name: "tokenType",
         type: "uint8",
       },
@@ -1201,8 +1206,8 @@ export const USDTB_MINTING_ABI = [
   },
   {
     inputs: [],
-    name: "ustb",
-    outputs: [{ internalType: "contract IUStb", name: "", type: "address" }],
+    name: "usdtb",
+    outputs: [{ internalType: "contract IUSDtb", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -1226,7 +1231,7 @@ export const USDTB_MINTING_ABI = [
         components: [
           { internalType: "string", name: "order_id", type: "string" },
           {
-            internalType: "enum IUStbMinting.OrderType",
+            internalType: "enum IUSDtbMinting.OrderType",
             name: "order_type",
             type: "uint8",
           },
@@ -1244,22 +1249,22 @@ export const USDTB_MINTING_ABI = [
             name: "collateral_amount",
             type: "uint128",
           },
-          { internalType: "uint128", name: "ustb_amount", type: "uint128" },
+          { internalType: "uint128", name: "usdtb_amount", type: "uint128" },
         ],
-        internalType: "struct IUStbMinting.Order",
+        internalType: "struct IUSDtbMinting.Order",
         name: "order",
         type: "tuple",
       },
       {
         components: [
           {
-            internalType: "enum IUStbMinting.SignatureType",
+            internalType: "enum IUSDtbMinting.SignatureType",
             name: "signature_type",
             type: "uint8",
           },
           { internalType: "bytes", name: "signature_bytes", type: "bytes" },
         ],
-        internalType: "struct IUStbMinting.Signature",
+        internalType: "struct IUSDtbMinting.Signature",
         name: "signature",
         type: "tuple",
       },
@@ -1278,7 +1283,7 @@ export const USDTB_MINTING_ABI = [
           { internalType: "address[]", name: "addresses", type: "address[]" },
           { internalType: "uint128[]", name: "ratios", type: "uint128[]" },
         ],
-        internalType: "struct IUStbMinting.Route",
+        internalType: "struct IUSDtbMinting.Route",
         name: "route",
         type: "tuple",
       },
@@ -1291,10 +1296,10 @@ export const USDTB_MINTING_ABI = [
   {
     inputs: [
       { internalType: "uint128", name: "collateralAmount", type: "uint128" },
-      { internalType: "uint128", name: "ustbAmount", type: "uint128" },
+      { internalType: "uint128", name: "usdtbAmount", type: "uint128" },
       { internalType: "address", name: "collateralAsset", type: "address" },
       {
-        internalType: "enum IUStbMinting.OrderType",
+        internalType: "enum IUSDtbMinting.OrderType",
         name: "orderType",
         type: "uint8",
       },

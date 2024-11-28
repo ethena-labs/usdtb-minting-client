@@ -29,7 +29,7 @@ load_dotenv(env_path)
 PRIVATE_KEY = os.getenv("PRIVATE_KEY", "")
 RPC_URL = os.getenv("RPC_URL")
 USDTB_MINTING_ADDRESS = (
-    "0x4a6B08f7d49a507778Af6FB7eebaE4ce108C981E"  # staging contract address
+    "0xdD7Ca5B25B2A857012537aA0393B4667B9824a72"  # staging contract address
 )
 USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
 BUIDL_ADDRESS = "0x7712c34205737192402172409a8f7ccef8aa2aec"
@@ -164,7 +164,7 @@ def approve(w3, collateral_address: str, private_key: str, amount: int):
     )
     print("SUBMITTING APPROVAL", amount)
     transaction = contract.functions.approve(USDTB_MINTING_ADDRESS, amount)
-    account = Account.from_key(PRIVATE_KEY)
+    account = Account.from_key(PRIVATE_KEY) # pylint: disable=no-value-for-parameter
 
     tx = transaction.build_transaction({
         'from': account.address,
