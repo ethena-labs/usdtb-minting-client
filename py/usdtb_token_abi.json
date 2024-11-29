@@ -218,6 +218,19 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "bool",
+        "name": "active",
+        "type": "bool"
+      }
+    ],
+    "name": "ToggleTransfers",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "token",
         "type": "address"
@@ -268,13 +281,13 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "enum IUSDtbDefinitions.TransferState",
+        "internalType": "enum IUStbDefinitions.TransferState",
         "name": "prevState",
         "type": "uint8"
       },
       {
         "indexed": false,
-        "internalType": "enum IUSDtbDefinitions.TransferState",
+        "internalType": "enum IUStbDefinitions.TransferState",
         "name": "state",
         "type": "uint8"
       }
@@ -343,15 +356,6 @@
       { "internalType": "address[]", "name": "users", "type": "address[]" }
     ],
     "name": "addBlacklistAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "minterContract", "type": "address" }
-    ],
-    "name": "addMinter",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -571,15 +575,6 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "minterContract", "type": "address" }
-    ],
-    "name": "removeMinter",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
       { "internalType": "address[]", "name": "users", "type": "address[]" }
     ],
     "name": "removeWhitelistAddress",
@@ -676,7 +671,7 @@
     "name": "transferState",
     "outputs": [
       {
-        "internalType": "enum IUSDtbDefinitions.TransferState",
+        "internalType": "enum IUStbDefinitions.TransferState",
         "name": "",
         "type": "uint8"
       }
@@ -687,7 +682,7 @@
   {
     "inputs": [
       {
-        "internalType": "enum IUSDtbDefinitions.TransferState",
+        "internalType": "enum IUStbDefinitions.TransferState",
         "name": "code",
         "type": "uint8"
       }
