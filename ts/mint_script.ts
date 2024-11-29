@@ -20,7 +20,7 @@ import { Side } from "./types";
 const AMOUNT: number = 25; // Amount in USD
 const COLLATERAL_ASSET: "BUIDL" | "USDC" = "USDC";
 const BENEFACTOR: Address =
-  "0x71aD9532857fD983A5b42282104393c4504aC26f" as Address; // Replace with your address
+  "0x3Aa3Fd1B762CaC519D405297CE630beD30430b00" as Address; // Replace with your address
 const SIDE: "MINT" | "REDEEM" = "MINT";
 
 const PRIVATE_KEY: Hex = process.env.PRIVATE_KEY as Hex;
@@ -32,6 +32,11 @@ const BUIDL_ADDRESS: Address = "0x7712c34205737192402172409a8f7ccef8aa2aec";
 
 async function main() {
   try {
+    const publicClient = createPublicClient({
+      chain: mainnet,
+      transport: http(process.env.RPC_URL as string),
+    });
+
     // Determine collateral asset address
     const collateralAddress =
       COLLATERAL_ASSET === "USDC" ? USDC_ADDRESS : BUIDL_ADDRESS;
@@ -65,6 +70,11 @@ async function main() {
         ALLOW_INFINITE_APPROVALS ? UINT256_MAX : bigIntAmount(AMOUNT)
       );
       console.log(`Approval submitted: https://etherscan.io/tx/${txHash}`);
+      // Wait for the transaction to be mined
+      await publicClient.waitForTransactionReceipt({
+        hash: txHash,
+        confirmations: 1,
+      });
     }
 
     const orderSigning = {
@@ -84,11 +94,6 @@ async function main() {
     const signature = await signOrder(orderSigning, PRIVATE_KEY);
 
     console.log("Signature", signature);
-
-    const publicClient = createPublicClient({
-      chain: mainnet,
-      transport: http(process.env.RPC_URL as string),
-    });
 
     const isValidSignature = await publicClient.readContract({
       address: MINT_ADDRESS,

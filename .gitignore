@@ -4,3 +4,4 @@ node_modules
 .venv
 venv
 .mypy_cache
+__pycache__
