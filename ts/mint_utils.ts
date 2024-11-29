@@ -9,7 +9,6 @@ import {
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
-import { USDTB_MINTING_ABI } from "./minting_abi";
 import {
   OrderSending,
   OrderSigning,
