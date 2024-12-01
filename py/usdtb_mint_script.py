@@ -2,6 +2,7 @@
 This module provides functionality to handle JSON data.
 It includes functions to read, write, and manipulate JSON objects.
 """
+
 import json
 import os
 import time
@@ -79,6 +80,7 @@ class Signature:
         signature_type (SignatureType): The type of the signature (e.g., EIP712, EIP1271).
         signature_bytes (bytes): The raw bytes of the signature.
     """
+
     signature_type: SignatureType
     signature_bytes: bytes
 
@@ -95,7 +97,7 @@ def get_rfq_data(url):
         or None if an error occurs.
     """
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=60)
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
@@ -164,13 +166,15 @@ def approve(w3, collateral_address: str, private_key: str, amount: int):
     )
     print("SUBMITTING APPROVAL", amount)
     transaction = contract.functions.approve(USDTB_MINTING_ADDRESS, amount)
-    account = Account.from_key(PRIVATE_KEY) # pylint: disable=no-value-for-parameter
+    account = Account.from_key(PRIVATE_KEY)  # pylint: disable=no-value-for-parameter
 
-    tx = transaction.build_transaction({
-        'from': account.address,
-        'value': 0,
-        'nonce': w3.eth.get_transaction_count(account.address),
-    })
+    tx = transaction.build_transaction(
+        {
+            "from": account.address,
+            "value": 0,
+            "nonce": w3.eth.get_transaction_count(account.address),
+        }
+    )
 
     signed_tx = w3.eth.account.sign_transaction(tx, private_key)
     tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
@@ -268,6 +272,8 @@ def main():
     mint_abi = load_abi("py/usdtb_mint_abi.json")
 
     w3 = Web3(Web3.HTTPProvider(RPC_URL))
+    # pylint: disable=no-value-for-parameter
+    acc: LocalAccount = Account.from_key(PRIVATE_KEY)
 
     allowance = get_allowance(w3, COLLATERAL_ASSET_ADDRESS)
     print("ALLOWANCE", allowance)
@@ -275,9 +281,7 @@ def main():
     if allowance < big_int_amount(AMOUNT):
         print("ALLOWANCE IS LESS THAN AMOUNT")
         approval_amount = (
-            (2 ** 256) - 1
-            if ALLOW_INFINITE_APPROVALS
-            else big_int_amount(AMOUNT)
+            (2**256) - 1 if ALLOW_INFINITE_APPROVALS else big_int_amount(AMOUNT)
         )
 
         print("APPROVAL AMOUNT", approval_amount)
@@ -289,14 +293,12 @@ def main():
         address=Web3.to_checksum_address(USDTB_MINTING_ADDRESS), abi=mint_abi
     )
 
-    rfq_url = f"{USDTB_PUBLIC_URL_STAGING}rfq?pair={COLLATERAL_ASSET}/USDtb&type_=ALGO&side=MINT&size={AMOUNT}"
+    rfq_url = f"{USDTB_PUBLIC_URL_STAGING}rfq?pair={COLLATERAL_ASSET}/USDtb&type_=ALGO&side=MINT&size={AMOUNT}&benefactor={acc.address}"
     rfq_data = get_rfq_data(rfq_url)
 
     if rfq_data is None:
         return
 
-    # pylint: disable=no-value-for-parameter
-    acc: LocalAccount = Account.from_key(PRIVATE_KEY)
     mint_order = create_mint_order(rfq_data, acc, COLLATERAL_ASSET_ADDRESS)
     signature = sign_order(w3, mint_order, acc, usdtb_minting_contract)
 
