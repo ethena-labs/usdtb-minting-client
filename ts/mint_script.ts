@@ -28,7 +28,7 @@ const ALLOW_INFINITE_APPROVALS = false;
 
 // Asset addresses
 const USDC_ADDRESS: Address = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
-const BUIDL_ADDRESS: Address = "0x7712c34205737192402172409a8f7ccef8aa2aec";
+const BUIDL_ADDRESS: Address = "0x7712c34205737192402172409a8F7ccef8aA2AEc";
 
 async function main() {
   try {
