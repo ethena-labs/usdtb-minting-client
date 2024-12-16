@@ -125,7 +125,7 @@ def get_balance(w3, collateral_address: str):
     balance = collateral_contract.functions.balanceOf(
         MULTISIG
     ).call()
-    return balance/10**6
+    return balance
 
 
 def create_mint_order(rfq_data, multisig, collateral_asset_address):
@@ -224,15 +224,16 @@ def main():
     )
 
     while True:
-        balance = get_balance(w3, COLLATERAL_ASSET_ADDRESS)
-        print("BALANCE", balance)
+        balance = int(get_balance(w3, COLLATERAL_ASSET_ADDRESS)/10**6) - 1
+        print("BALANCE to mint", balance)
         if balance < MIN_MINT_AMOUNT:
             time.sleep(10)
             continue
-        mint_amount = min(MAX_MINT_AMOUNT, balance)
+        mint_amount = int(min(MAX_MINT_AMOUNT, balance))
         rfq_url = f"{USDTB_PUBLIC_URL}rfq?pair={COLLATERAL_ASSET}/USDtb&type_=ALGO&side=MINT&size={mint_amount}&benefactor={MULTISIG}"
         rfq_data = get_rfq_data(rfq_url)
-
+        logging.info(rfq_url)
+        logging.info(rfq_data)
         if rfq_data is None:
             return
 
