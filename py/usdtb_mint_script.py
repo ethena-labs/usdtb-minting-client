@@ -211,7 +211,7 @@ def create_mint_order(rfq_data, acc, collateral_asset_address):
     logging.info("Creating mint order...")
     return {
         "order_id": str(rfq_data["rfq_id"]),
-        "order_type": "MINT",
+        "order_type": rfq_data["side"],
         "expiry": int(time.time() + 60),
         "nonce": int(time.time() + 60),
         "benefactor": acc.address,
