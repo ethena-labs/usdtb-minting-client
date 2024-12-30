@@ -13,7 +13,7 @@ export const ORDER_TYPE = {
     { name: "usdtb_amount", type: "uint128" },
   ],
 } as const;
-export const MINT_ADDRESS = "0xdD7Ca5B25B2A857012537aA0393B4667B9824a72";
+export const MINT_ADDRESS = "0xa3DDBf92077b850E29C4805Df0a2459Ae048416a";
 
 export const DOMAIN = {
   chainId: 1,
