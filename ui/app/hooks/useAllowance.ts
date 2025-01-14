@@ -2,8 +2,7 @@ import { parseUnits, Address, erc20Abi } from "viem";
 
 import { useAccount, useReadContract } from "wagmi";
 
-import { MINTING_ADDRESS, PAIR_TOKENS } from "@/app/constants/appConfig";
-import { useEffect } from "react";
+import { MINTING_ADDRESS, PAIR_TOKENS } from "@/app/constants/app-config";
 
 export const useAllowance = ({
   amount,
@@ -20,8 +19,6 @@ export const useAllowance = ({
         ?.decimals ?? 6
     )
   );
-
-  useEffect(() => {}, [amount]);
 
   const { data: allowance = BigInt(0), isLoading: isCheckingAllowance } =
     useReadContract({

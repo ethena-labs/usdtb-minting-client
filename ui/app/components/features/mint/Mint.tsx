@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/Select";
-import { MINTING_TOKEN_NAME, PAIR_TOKENS } from "@/app/constants/appConfig";
+import { MINTING_TOKEN_NAME, PAIR_TOKENS } from "@/app/constants/app-config";
 import { useAllowance } from "@/app/hooks/useAllowance";
 import { useApprove } from "@/app/hooks/useApprove";
 import { useMint } from "@/app/hooks/useMint";
@@ -74,11 +74,13 @@ export const Mint = () => {
             type="number"
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
+            disabled={isLoading}
           />
           <Select
             defaultValue={defaultTokenAddress}
             value={selectedTokenAddress}
             onValueChange={(value) => setSelectedTokenAddress(value as Address)}
+            disabled={isLoading}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue />

@@ -1,5 +1,5 @@
 import { Box } from "@/app/components/Box";
-import { MINTING_TOKEN_NAME } from "@/app/constants/appConfig";
+import { MINTING_TOKEN_NAME } from "@/app/constants/app-config";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 

@@ -6,7 +6,7 @@ import {
 
 import { Address, erc20Abi, parseUnits } from "viem";
 import { useSimulateContract } from "wagmi";
-import { MINTING_ADDRESS, PAIR_TOKENS } from "@/app/constants/appConfig";
+import { MINTING_ADDRESS, PAIR_TOKENS } from "@/app/constants/app-config";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 

@@ -2,7 +2,7 @@ import { formatAddress } from "@/app/utils/formatAddress";
 import { useDisconnect, useAccount } from "wagmi";
 import { Button } from "@/app/components/Button";
 import { Box } from "@/app/components/Box";
-import { MINTING_TOKEN_NAME } from "@/app/constants/appConfig";
+import { MINTING_TOKEN_NAME } from "@/app/constants/app-config";
 
 export const NotWhitelisted = ({
   isWhitelisted,

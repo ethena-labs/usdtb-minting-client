@@ -2,11 +2,10 @@
 import "@rainbow-me/rainbowkit/styles.css";
 
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { http, WagmiProvider } from "wagmi";
+import { WagmiProvider } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { MINTING_TOKEN_NAME } from "@/app/constants/appConfig";
-import { createPublicClient } from "viem";
+import { MINTING_TOKEN_NAME } from "@/app/constants/app-config";
 
 const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? "";
 
@@ -17,11 +16,6 @@ export const config = getDefaultConfig({
   projectId: projectId,
   chains: [mainnet],
   ssr: true,
-});
-
-export const publicClient = createPublicClient({
-  chain: config.chains[0],
-  transport: http(),
 });
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {

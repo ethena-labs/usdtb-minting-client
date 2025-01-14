@@ -1,5 +1,5 @@
-import { MINTING_ADDRESS } from "@/app/constants/appConfig";
-import { MINTING_ABI } from "@/app/constants/appConfig";
+import { MINTING_ADDRESS } from "@/app/constants/app-config";
+import { MINTING_ABI } from "@/app/constants/app-config";
 import { useReadContract } from "wagmi";
 
 import { useAccount } from "wagmi";

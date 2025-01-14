@@ -1,26 +1,22 @@
 "use client";
 
-import { LoadingWhitelist } from "@/app/components/features/mint/LoadingWhitelist";
 import { Mint } from "@/app/components/features/mint/Mint";
 import { NotConnected } from "@/app/components/features/mint/NotConnected";
 import { NotWhitelisted } from "@/app/components/features/mint/NotWhitelisted";
-import { useIsMounted } from "@/app/hooks/useIsMounted";
+import { Loading } from "@/app/components/Loading";
 import { useWhitelistCheck } from "@/app/hooks/useWhitelistCheck";
 import { useAccount } from "wagmi";
 
 export default function Home() {
-  const { address } = useAccount();
-  const { isLoading: isCheckingWhitelist, isWhitelisted } = useWhitelistCheck();
-  const isMounted = useIsMounted(0);
+  const { address, isConnecting } = useAccount();
+  const { isLoading: isCheckingWhitelist, isWhitelisted = false } =
+    useWhitelistCheck();
 
-  if (!isMounted) return;
+  if (isCheckingWhitelist || isConnecting) return <Loading />;
 
   if (!address) return <NotConnected />;
 
-  if (isCheckingWhitelist) return <LoadingWhitelist />;
-
-  if (!isWhitelisted)
-    return <NotWhitelisted isWhitelisted={isWhitelisted ?? false} />;
+  if (!isWhitelisted) return <NotWhitelisted isWhitelisted={isWhitelisted} />;
 
   return <Mint />;
 }

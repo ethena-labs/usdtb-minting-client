@@ -6,7 +6,7 @@ import {
   MINTING_ADDRESS,
   MINTING_ABI,
   TOKEN_AMOUNT_FIELD,
-} from "@/app/constants/appConfig";
+} from "@/app/constants/app-config";
 import { Address } from "viem";
 import { useAccount, useWalletClient, usePublicClient } from "wagmi";
 import { toast } from "react-toastify";
@@ -15,7 +15,7 @@ import { useState } from "react";
 
 export interface Rfq {
   collateral_asset: Address;
-  usdtb_amount: string;
+  [TOKEN_AMOUNT_FIELD]: string;
   gas: number;
   pair: string;
   collateral_amount: string;

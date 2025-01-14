@@ -1,4 +1,4 @@
-export const LoadingWhitelist = () => {
+export const Loading = () => {
   return (
     <div className="m-auto">
       <div className="relative flex h-8 w-8 items-center justify-center">

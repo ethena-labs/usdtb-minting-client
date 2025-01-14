@@ -5,7 +5,7 @@ export const IS_PROD_ENV = process.env.NEXT_PUBLIC_APP_ENV !== "development";
 export const MINTING_ABI = MINTING_CONTRACT_ABI;
 export const MINTING_ADDRESS = "0xdD7Ca5B25B2A857012537aA0393B4667B9824a72";
 export const MINTING_TOKEN_NAME = "USDtb";
-export const MINTING_TOKEN_URL = "https://public.api.staging.usdtb.money/";
+export const MINTING_TOKEN_URL = process.env.NEXT_PUBLIC_MMAPI_URL ?? "";
 
 export const PAIR_TOKENS = [
   {
@@ -23,3 +23,5 @@ export const DOMAIN = {
 } as const;
 
 export const TOKEN_AMOUNT_FIELD = "usdtb_amount";
+export const GITHUB_URL = "https://github.com/ethena-labs";
+export const GITBOOK_URL = "https://docs.usdtb.money/";
