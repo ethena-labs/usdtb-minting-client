@@ -29,4 +29,4 @@ export const DOMAIN = {
 export const TOKEN_AMOUNT_FIELD = "usdtb_amount";
 export const GITHUB_URL = "https://github.com/ethena-labs";
 export const GITBOOK_URL = "https://docs.usdtb.money/";
-export const WAGMI_PROJECT_ID = "7cb22812983b20102ed5df724cadfa99";
+export const WAGMI_PROJECT_ID = "4b4cd8ea5a7805c848fd89f3a0132307";
