@@ -95,7 +95,7 @@ export const useMint = ({
 
     try {
       const rfq = await fetch(
-        `${MINTING_TOKEN_URL}rfq?pair=${pair}&type_=UI&side=MINT&size=${amount}&benefactor=${address}`
+        `${MINTING_TOKEN_URL}/rfq?pair=${pair}&type_=UI&side=MINT&size=${amount}&benefactor=${address}`
       );
       if (!rfq.ok) {
         throw new Error(`RFQ request failed: ${rfq.statusText}`);
@@ -135,7 +135,7 @@ export const useMint = ({
       }
 
       const response = await fetch(
-        `${MINTING_TOKEN_URL}order?signature=${signature}`,
+        `${MINTING_TOKEN_URL}/order?signature=${signature}`,
         {
           method: "POST",
           headers: {

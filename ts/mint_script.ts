@@ -17,10 +17,10 @@ import { MINT_ADDRESS } from "./constants";
 import { Side } from "./types";
 
 // Configuration
-const AMOUNT: number = 25; // Amount in USD
+const AMOUNT: number = 30; // Amount in USD
 const COLLATERAL_ASSET: "BUIDL" | "USDC" = "USDC";
 const BENEFACTOR: Address =
-  "0x3Aa3Fd1B762CaC519D405297CE630beD30430b00" as Address; // Replace with your address
+  "0x41D13543Af43A7c1e6c9DDb42ba73d20AeC79aE6" as Address; // Replace with your address
 const SIDE: "MINT" | "REDEEM" = "MINT";
 
 const PRIVATE_KEY: Hex = process.env.PRIVATE_KEY as Hex;
