@@ -1,13 +1,13 @@
 import { MINTING_CONTRACT_ABI } from "@/app/constants/minting-abi";
 
-export const IS_PROD_ENV = false; // set to true for production minting
+export const IS_PROD = false; // set to true for production minting
 
 export const MINTING_ABI = MINTING_CONTRACT_ABI;
-export const MINTING_ADDRESS = IS_PROD_ENV
+export const MINTING_ADDRESS = IS_PROD
   ? "0xa3DDBf92077b850E29C4805Df0a2459Ae048416a"
   : "0xdD7Ca5B25B2A857012537aA0393B4667B9824a72";
 export const MINTING_TOKEN_NAME = "USDtb";
-export const MINTING_TOKEN_URL = IS_PROD_ENV
+export const MINTING_TOKEN_URL = IS_PROD
   ? "https://public.api.usdtb.money/"
   : "https://public.api.staging.usdtb.money/";
 
