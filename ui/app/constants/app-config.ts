@@ -3,7 +3,7 @@ import { MINTING_CONTRACT_ABI } from "@/app/constants/minting-abi";
 export const IS_PROD_ENV = process.env.NEXT_PUBLIC_APP_ENV !== "development";
 
 export const MINTING_ABI = MINTING_CONTRACT_ABI;
-export const MINTING_ADDRESS = "0xdD7Ca5B25B2A857012537aA0393B4667B9824a72";
+export const MINTING_ADDRESS = "0xa3DDBf92077b850E29C4805Df0a2459Ae048416a";
 export const MINTING_TOKEN_NAME = "USDtb";
 export const MINTING_TOKEN_URL = process.env.NEXT_PUBLIC_MMAPI_URL ?? "";
 
