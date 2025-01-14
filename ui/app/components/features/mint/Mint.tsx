@@ -1,6 +1,5 @@
 "use client";
 
-import sanitize from "sanitize-html";
 import { Box } from "@/app/components/Box";
 import { Button } from "@/app/components/Button";
 import { Input } from "@/app/components/Input";
@@ -18,26 +17,25 @@ import { useMint } from "@/app/hooks/useMint";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Address } from "viem";
 import { useState } from "react";
-import { removeCommas, trimLeadingZero } from "@/app/utils/cleanInput";
 
 export const Mint = () => {
   const defaultTokenAddress = PAIR_TOKENS[0].address as Address;
   const [selectedTokenAddress, setSelectedTokenAddress] =
     useState(defaultTokenAddress);
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<number | "">("");
 
   const { isAllowed, isCheckingAllowance } = useAllowance({
-    amount,
+    amount: Number(amount),
     selectedTokenAddress,
   });
 
   const { onApprove, isLoading: isApproving } = useApprove({
-    amount,
+    amount: Number(amount),
     selectedTokenAddress,
   });
 
   const { onMint, isLoading: isMinting } = useMint({
-    amount,
+    amount: Number(amount),
     selectedTokenAddress,
   });
 
@@ -73,15 +71,14 @@ export const Mint = () => {
         <div className="flex items-center justify-center gap-2">
           <Input
             placeholder="0"
-            type="text"
+            type="number"
             data-type="currency"
             value={amount}
-            onChange={(e) => {
-              const value = trimLeadingZero(
-                removeCommas(sanitize(e.target.value))
-              );
-              setAmount(Number(value));
-            }}
+            onChange={(e) =>
+              e.target.value === ""
+                ? setAmount("")
+                : setAmount(Number(e.target.value))
+            }
             disabled={isLoading}
           />
           <Select
