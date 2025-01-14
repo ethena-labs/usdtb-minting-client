@@ -4,6 +4,8 @@ This UI showcases how minting and redeeming USDtb can be done in a React applica
 
 ## Setup
 
+Inside the `ui` directory, run the following commands:
+
 1. Install dependencies:
 
 `pnpm i`
