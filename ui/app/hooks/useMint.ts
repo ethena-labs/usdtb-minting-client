@@ -12,6 +12,7 @@ import { useAccount, useWalletClient, usePublicClient } from "wagmi";
 import { toast } from "react-toastify";
 import { parseScientificOrNonScientificToBigInt } from "@/app/utils/parseScientificToBigInt";
 import { useState } from "react";
+import { TransactionToast } from "@/app/components/Toast";
 
 export interface Rfq {
   collateral_asset: Address;
@@ -156,7 +157,7 @@ export const useMint = ({
         throw new Error(result.error);
       }
 
-      toast.success(`Minted: ${result.tx}`);
+      toast.success(TransactionToast("Successfully minted!", result.tx));
       setIsLoading(false);
       return result.tx;
     } catch (error) {

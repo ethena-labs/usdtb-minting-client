@@ -5,15 +5,16 @@ import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { MINTING_TOKEN_NAME } from "@/app/constants/app-config";
-
-const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? "";
+import {
+  MINTING_TOKEN_NAME,
+  WAGMI_PROJECT_ID,
+} from "@/app/constants/app-config";
 
 const queryClient = new QueryClient();
 
 export const config = getDefaultConfig({
   appName: MINTING_TOKEN_NAME,
-  projectId: projectId,
+  projectId: WAGMI_PROJECT_ID,
   chains: [mainnet],
   ssr: true,
 });

@@ -9,6 +9,7 @@ import { useSimulateContract } from "wagmi";
 import { MINTING_ADDRESS, PAIR_TOKENS } from "@/app/constants/app-config";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { TransactionToast } from "@/app/components/Toast";
 
 export const useApprove = ({
   amount,
@@ -52,7 +53,7 @@ export const useApprove = ({
 
   useEffect(() => {
     if (isSuccess && txHash) {
-      toast.success(`Approved: ${txHash}`);
+      toast.success(TransactionToast("Successfully approved!", txHash));
     }
     if (isError) {
       toast.error("Error approving");

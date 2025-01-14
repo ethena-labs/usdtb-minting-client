@@ -71,13 +71,11 @@ export default function RootLayout({
                 </div>
                 <ToastContainer
                   position="bottom-right"
-                  autoClose={5000}
+                  autoClose={8000}
                   hideProgressBar={false}
                   newestOnTop={false}
                   closeOnClick={false}
                   rtl={false}
-                  pauseOnFocusLoss
-                  draggable
                   pauseOnHover
                   theme="light"
                   transition={Bounce}
