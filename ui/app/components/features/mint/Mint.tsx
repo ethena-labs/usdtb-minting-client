@@ -63,53 +63,77 @@ export const Mint = () => {
 
   return (
     <Box>
-      <div className="flex flex-col gap-8">
+      <section className="flex flex-col gap-8">
         <div className="flex flex-wrap justify-between items-center gap-2 sm:gap-10 w-full">
           <h1 className="text-2xl font-medium">Mint {MINTING_TOKEN_NAME}</h1>
           <ConnectButton showBalance={false} />
         </div>
-        <div className="flex items-center justify-center gap-2">
-          <Input
-            placeholder="0"
-            type="number"
-            data-type="currency"
-            value={amount}
-            onChange={(e) =>
-              e.target.value === ""
-                ? setAmount("")
-                : setAmount(Number(e.target.value))
+        <form
+          className="flex flex-col gap-6"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (isAllowed) {
+              onMint();
+            } else {
+              onApprove();
             }
-            disabled={isLoading}
-          />
-          <Select
-            defaultValue={defaultTokenAddress}
-            value={selectedTokenAddress}
-            onValueChange={(value) => setSelectedTokenAddress(value as Address)}
-            disabled={isLoading}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {PAIR_TOKENS.map((token) => (
-                <SelectItem key={token.name} value={token.address}>
-                  {token.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <Button
-          className="w-full"
-          disabled={isLoading || !amount}
-          onClick={isAllowed ? onMint : onApprove}
+          }}
         >
-          {isLoading && (
-            <div className="bg-white mr-0.5 h-2 w-2 animate-pulse rounded-full" />
-          )}
-          {getButtonText()}
-        </Button>
-      </div>
+          <div className="flex items-center justify-center gap-2">
+            <label htmlFor="amount" className="sr-only">
+              Amount
+            </label>
+            <Input
+              id="amount"
+              name="amount"
+              placeholder="0"
+              type="number"
+              data-type="currency"
+              value={amount}
+              onChange={(e) =>
+                e.target.value === ""
+                  ? setAmount("")
+                  : setAmount(Number(e.target.value))
+              }
+              disabled={isLoading}
+            />
+            <label htmlFor="token-select" className="sr-only">
+              Select token
+            </label>
+            <Select
+              name="token-select"
+              defaultValue={defaultTokenAddress}
+              value={selectedTokenAddress}
+              onValueChange={(value) =>
+                setSelectedTokenAddress(value as Address)
+              }
+              disabled={isLoading}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PAIR_TOKENS.map((token) => (
+                  <SelectItem key={token.name} value={token.address}>
+                    {token.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading || !amount}
+            aria-busy={isLoading}
+          >
+            {isLoading && (
+              <div className="bg-white mr-0.5 h-2 w-2 animate-pulse rounded-full" />
+            )}
+            {getButtonText()}
+          </Button>
+        </form>
+      </section>
     </Box>
   );
 };
