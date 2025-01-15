@@ -22,6 +22,6 @@ export const DOMAIN = {
   version: "1",
 } as const;
 
-export const USDTB_URL = "https://public.api.staging.usdtb.money/";
+export const USDTB_URL = "https://public.api.usdtb.money/";
 
 export const RPC_URL = process.env.RPC_URL as string;
