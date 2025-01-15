@@ -10,13 +10,11 @@ Inside the `ui` directory, run the following commands:
 
 `pnpm i`
 
-2. Set the environment variables:
-
-`cp .env.example .env`
-
-3. Run the development server:
+2. Run the development server:
 
 `pnpm dev`
+
+You can toggle between interacting with the production and staging environment by changing the `IS_PROD` variable in [`/app/constants/app-config.ts`](/ui/app/constants/app-config.ts).
 
 ## Instructions for use in a larger project
 
