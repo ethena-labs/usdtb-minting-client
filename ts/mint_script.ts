@@ -1,4 +1,4 @@
-import { Address, createPublicClient, Hex, http } from "viem";
+import { Address, checksumAddress, createPublicClient, Hex, http } from "viem";
 import "dotenv/config";
 import {
   createMintOrder,
@@ -19,8 +19,9 @@ import { Side } from "./types";
 // Configuration
 const AMOUNT: number = 30; // Amount in USD
 const COLLATERAL_ASSET: "BUIDL" | "USDC" = "USDC";
-const BENEFACTOR: Address =
-  "0x41D13543Af43A7c1e6c9DDb42ba73d20AeC79aE6" as Address; // Replace with your address
+const BENEFACTOR: Address = checksumAddress(
+  "0x41D13543Af43A7c1e6c9DDb42ba73d20AeC79aE6" // Replace with your address
+) as Address;
 const SIDE: "MINT" | "REDEEM" = "MINT";
 
 const PRIVATE_KEY: Hex = process.env.PRIVATE_KEY as Hex;
