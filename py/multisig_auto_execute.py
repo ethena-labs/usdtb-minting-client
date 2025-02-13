@@ -23,7 +23,7 @@ load_dotenv(env_path)
 # Constants
 PRIVATE_KEY = os.getenv("PRIVATE_KEY", "")
 RPC_URL = os.getenv("RPC_URL")
-MULTISIG = Web3.to_checksum_address("0x2B5AB59163a6e93b4486f6055D33CA4a115Dd4D5")
+MULTISIG = Web3.to_checksum_address(os.getenv("MULTISIG_ADDRESS"))
 COLLATERAL_ASSET = "USDC"
 COLLATERAL_ASSET_ADDRESS = USDC_ADDRESS if COLLATERAL_ASSET == "USDC" else BUIDL_ADDRESS
 ORDER_SIDE = "REDEEM"  # MINT
