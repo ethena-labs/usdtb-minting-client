@@ -30,14 +30,15 @@ load_dotenv(env_path)
 PRIVATE_KEY = os.getenv("PRIVATE_KEY", "")
 RPC_URL = os.getenv("RPC_URL")
 USDTB_MINTING_ADDRESS = (
-    "0xdD7Ca5B25B2A857012537aA0393B4667B9824a72"  # staging contract address
+    "0xa3DDBf92077b850E29C4805Df0a2459Ae048416a"
 )
+USDTB_ADDRESS = "0xC139190F447e929f090Edeb554D95AbB8b18aC1C"
 USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
-BUIDL_ADDRESS = "0x7712c34205737192402172409a8f7ccef8aa2aec"
-COLLATERAL_ASSET = "USDC"
+BUIDL_ADDRESS = "0x7712c34205737192402172409a8F7ccef8aA2AEc"
+COLLATERAL_ASSET = "BUIDL"
 COLLATERAL_ASSET_ADDRESS = USDC_ADDRESS if COLLATERAL_ASSET == "USDC" else BUIDL_ADDRESS
 
-AMOUNT = 25
+AMOUNT = 500
 ALLOW_INFINITE_APPROVALS = False
 
 # URLs
@@ -214,8 +215,47 @@ def create_mint_order(rfq_data, acc, collateral_asset_address):
         "order_type": "MINT",
         "expiry": int(time.time() + 60),
         "nonce": int(time.time() + 60),
-        "benefactor": acc.address,
-        "beneficiary": acc.address,
+        "benefactor": acc,
+        "beneficiary": acc,
+        "collateral_asset": collateral_asset_address,
+        "collateral_amount": int(rfq_data["collateral_amount"]),
+        "usdtb_amount": int(rfq_data["usdtb_amount"]),
+    }
+
+
+def create_redeem_order(rfq_data, acc, collateral_asset_address):
+    """
+    Creates a redeem order with the provided RFQ data and account details.
+
+    This function generates a redeem order dictionary that includes the RFQ ID, order type, expiry time,
+    nonce, and details about the benefactor and beneficiary. It also includes collateral information
+    such as the asset address and amount, as well as the amount of USDTB to mint.
+
+    Args:
+        rfq_data (dict): A dictionary containing the RFQ data.
+        acc (object): An account object that contains the address of the user making the mint request.
+        collateral_asset_address (str): The address of the collateral asset to be received in the redeem order.
+
+    Returns:
+        dict: A dictionary containing the mint order with the following keys:
+            - order_id (str): The RFQ ID as a string.
+            - order_type (str): The type of the order, which is "MINT".
+            - expiry (int): The timestamp representing when the order expires.
+            - nonce (int): A nonce used for order identification and security.
+            - benefactor (str): The address of the benefactor (the person creating the order).
+            - beneficiary (str): The address of the beneficiary (the recipient of the redeemed tokens).
+            - collateral_asset (str): The address of the collateral asset.
+            - collateral_amount (int): The amount of collateral to be received.
+            - usdtb_amount (int): The amount of USDTB to be sent in for redeemption.
+    """
+    logging.info("Creating redeem order...")
+    return {
+        "order_id": str(rfq_data["rfq_id"]),
+        "order_type": "REDEEM",
+        "expiry": int(time.time() + 60),
+        "nonce": int(time.time() + 60),
+        "benefactor": acc,
+        "beneficiary": acc,
         "collateral_asset": collateral_asset_address,
         "collateral_amount": int(rfq_data["collateral_amount"]),
         "usdtb_amount": int(rfq_data["usdtb_amount"]),
@@ -249,8 +289,9 @@ def sign_order(w3, mint_order, acc, usdtb_minting_contract):
         mint_order["collateral_amount"],
         mint_order["usdtb_amount"],
     )
+    print(order_tuple)
     order_hash = usdtb_minting_contract.functions.hashOrder(order_tuple).call()
-    order_signed = acc.signHash(order_hash)
+    order_signed = acc.unsafe_sign_hash(order_hash)
     order_rsv = (
         to_bytes(order_signed.r) + to_bytes(order_signed.s) + to_bytes(order_signed.v)
     )
@@ -274,36 +315,41 @@ def main():
     w3 = Web3(Web3.HTTPProvider(RPC_URL))
     # pylint: disable=no-value-for-parameter
     acc: LocalAccount = Account.from_key(PRIVATE_KEY)
+    print(acc.address)
+    multisig = Web3.to_checksum_address(
+        "0x2B5AB59163a6e93b4486f6055D33CA4a115Dd4D5" # Your address here
+        #"0x915e2215F57D4373a5c94F0139b6fbDDCA4dE4CA"
+    )
 
-    allowance = get_allowance(w3, COLLATERAL_ASSET_ADDRESS)
-    print("ALLOWANCE", allowance)
-
-    if allowance < big_int_amount(AMOUNT):
-        print("ALLOWANCE IS LESS THAN AMOUNT")
-        approval_amount = (
-            (2**256) - 1 if ALLOW_INFINITE_APPROVALS else big_int_amount(AMOUNT)
-        )
-
-        print("APPROVAL AMOUNT", approval_amount)
-
-        tx_hash = approve(w3, COLLATERAL_ASSET_ADDRESS, PRIVATE_KEY, approval_amount)
-        print(f"Approval submitted: https://etherscan.io/tx/{tx_hash}")
+    # allowance = get_allowance(w3, COLLATERAL_ASSET_ADDRESS)
+    # print("ALLOWANCE", allowance)
+    #
+    # if allowance < big_int_amount(AMOUNT):
+    #     print("ALLOWANCE IS LESS THAN AMOUNT")
+    #     approval_amount = (
+    #         (2**256) - 1 if ALLOW_INFINITE_APPROVALS else big_int_amount(AMOUNT)
+    #     )
+    #
+    #     print("APPROVAL AMOUNT", approval_amount)
+    #
+    #     tx_hash = approve(w3, COLLATERAL_ASSET_ADDRESS, PRIVATE_KEY, approval_amount)
+    #     print(f"Approval submitted: https://etherscan.io/tx/{tx_hash}")
 
     usdtb_minting_contract = w3.eth.contract(
         address=Web3.to_checksum_address(USDTB_MINTING_ADDRESS), abi=mint_abi
     )
 
-    rfq_url = f"{USDTB_PUBLIC_URL_STAGING}rfq?pair={COLLATERAL_ASSET}/USDtb&type_=ALGO&side=MINT&size={AMOUNT}&benefactor={acc.address}"
+    rfq_url = f"{USDTB_PUBLIC_URL}rfq?pair={COLLATERAL_ASSET}/USDtb&type_=ALGO&side=MINT&size={AMOUNT}&benefactor={multisig}"
     rfq_data = get_rfq_data(rfq_url)
 
     if rfq_data is None:
         return
 
-    mint_order = create_mint_order(rfq_data, acc, COLLATERAL_ASSET_ADDRESS)
+    mint_order = create_mint_order(rfq_data, multisig, COLLATERAL_ASSET_ADDRESS)
     signature = sign_order(w3, mint_order, acc, usdtb_minting_contract)
 
     signature_hex = to_hex(signature.signature_bytes)
-    order_url = f"{USDTB_PUBLIC_URL_STAGING}order?signature={signature_hex}"
+    order_url = f"{USDTB_PUBLIC_URL}order?signature={signature_hex}"
 
     try:
         logging.info(f"Submitting order: {mint_order}")
