@@ -27,7 +27,7 @@ MULTISIG = Web3.to_checksum_address(os.getenv("MULTISIG_ADDRESS"))
 COLLATERAL_ASSET = "USDC"
 COLLATERAL_ASSET_ADDRESS = USDC_ADDRESS if COLLATERAL_ASSET == "USDC" else BUIDL_ADDRESS
 ORDER_SIDE = "REDEEM"  # MINT
-MIN_MINT_AMOUNT = 1000
+MIN_MINT_AMOUNT = 25
 MAX_MINT_AMOUNT = 9_900_000
 ALLOW_INFINITE_APPROVALS = False
 
@@ -76,44 +76,48 @@ def main():
     )
 
     while True:
-        collateral_balance = int(get_balance(w3, COLLATERAL_ASSET_ADDRESS)/10**6) - 1 #for minting
-        usdtb_balance = int(get_balance(w3, USDTB_ADDRESS)/10**6) - 1 #for redeeming
-        balance = collateral_balance if ORDER_SIDE == "MINT" else usdtb_balance
-        print(f"BALANCE to {ORDER_SIDE}", balance)
-        if balance < MIN_MINT_AMOUNT:
-            time.sleep(10)
-            continue
-        rfq_amount = int(min(MAX_MINT_AMOUNT, balance))
-        rfq_url = f"{USDTB_PUBLIC_URL}rfq?pair={COLLATERAL_ASSET}/USDtb&type_=ALGO&side={ORDER_SIDE}&size={rfq_amount}&benefactor={MULTISIG}"
-        rfq_data = get_rfq_data(rfq_url)
-        logging.info(rfq_url)
-        logging.info(rfq_data)
-        if rfq_data is None:
-            return
-        if ORDER_SIDE == "MINT":
-            order = create_mint_order(rfq_data, MULTISIG, COLLATERAL_ASSET_ADDRESS)
-        else:
-            order = create_redeem_order(rfq_data, MULTISIG, COLLATERAL_ASSET_ADDRESS)
-        signature = sign_order(w3, order, acc, usdtb_minting_contract)
-
-        signature_hex = to_hex(signature.signature_bytes)
-        order_url = f"{USDTB_PUBLIC_URL}order?signature={signature_hex}"
-
         try:
-            logging.info(f"Submitting {ORDER_SIDE} order: {order}")
-            response = requests.post(order_url, json=order, timeout=60)
-            response_data = response.json()
-            if response.status_code != 200:
-                logging.error(
-                    f"Issue submitting order: HTTP {response.status_code}: {response_data['error']}"
-                )
+            collateral_balance = int(get_balance(w3, COLLATERAL_ASSET_ADDRESS)/10**6) - 1 #for minting
+            usdtb_balance = int(get_balance(w3, USDTB_ADDRESS)/10**6) - 1 #for redeeming
+            balance = collateral_balance if ORDER_SIDE == "MINT" else usdtb_balance
+            print(f"BALANCE to {ORDER_SIDE}", balance)
+            if balance < MIN_MINT_AMOUNT:
+                time.sleep(10)
+                continue
+            rfq_amount = int(min(MAX_MINT_AMOUNT, balance))
+            rfq_url = f"{USDTB_PUBLIC_URL}rfq?pair={COLLATERAL_ASSET}/USDtb&type_=ALGO&side={ORDER_SIDE}&size={rfq_amount}&benefactor={MULTISIG}"
+            rfq_data = get_rfq_data(rfq_url)
+            logging.info(rfq_url)
+            logging.info(rfq_data)
+            if rfq_data is None:
+                return
+            if ORDER_SIDE == "MINT":
+                order = create_mint_order(rfq_data, MULTISIG, COLLATERAL_ASSET_ADDRESS)
             else:
-                tx_id = response_data["tx"]
-                logging.info(f"Transaction submitted: https://etherscan.io/tx/{tx_id}")
-        except requests.RequestException as e:
-            logging.error(f"Error submitting order: {e}")
-        time.sleep(13)
+                order = create_redeem_order(rfq_data, MULTISIG, COLLATERAL_ASSET_ADDRESS)
+            signature = sign_order(w3, order, acc, usdtb_minting_contract)
 
+            signature_hex = to_hex(signature.signature_bytes)
+            order_url = f"{USDTB_PUBLIC_URL}order?signature={signature_hex}"
+
+            try:
+                logging.info(f"Submitting {ORDER_SIDE} order: {order}")
+                response = requests.post(order_url, json=order, timeout=60)
+                response_data = response.json()
+                if response.status_code != 200:
+                    logging.error(
+                        f"Issue submitting order: HTTP {response.status_code}: {response_data['error']}"
+                    )
+                else:
+                    tx_id = response_data["tx"]
+                    logging.info(f"Transaction submitted: https://etherscan.io/tx/{tx_id}")
+            except requests.RequestException as e:
+                logging.error(f"Error submitting order: {e}")
+            time.sleep(13)
+        except Exception as e:
+            # Can occur during api restarts
+            logging.error(f"Global exception: {e}")
+            time.sleep(13)
 
 if __name__ == "__main__":
     main()
