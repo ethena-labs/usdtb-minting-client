@@ -25,10 +25,10 @@ PRIVATE_KEY = os.getenv("PRIVATE_KEY", "")
 RPC_URL = os.getenv("RPC_URL")
 MULTISIG = Web3.to_checksum_address(os.getenv("MULTISIG_ADDRESS"))
 COLLATERAL_ASSET = "USDC"
-COLLATERAL_ASSET_ADDRESS = USDC_ADDRESS if COLLATERAL_ASSET == "USDC" else BUIDL_ADDRESS
+COLLATERAL_ASSET_ADDRESS = USDC_ADDRESS# if COLLATERAL_ASSET == "USDC" else BUIDL_ADDRESS
 ORDER_SIDE = "REDEEM"  # MINT
 MIN_MINT_AMOUNT = 25
-MAX_MINT_AMOUNT = 9_900_000
+MAX_MINT_AMOUNT = 1_000_000
 ALLOW_INFINITE_APPROVALS = False
 
 def get_balance(w3, collateral_address: str):
@@ -78,7 +78,7 @@ def main():
     while True:
         try:
             collateral_balance = int(get_balance(w3, COLLATERAL_ASSET_ADDRESS)/10**6) - 1 #for minting
-            usdtb_balance = int(get_balance(w3, USDTB_ADDRESS)/10**6) - 1 #for redeeming
+            usdtb_balance = int(get_balance(w3, USDTB_ADDRESS)/10**18) - 1 #for redeeming
             balance = collateral_balance if ORDER_SIDE == "MINT" else usdtb_balance
             print(f"BALANCE to {ORDER_SIDE}", balance)
             if balance < MIN_MINT_AMOUNT:
