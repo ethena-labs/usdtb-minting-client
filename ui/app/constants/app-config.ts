@@ -8,8 +8,8 @@ export const MINTING_ADDRESS = IS_PROD
   : "0xdD7Ca5B25B2A857012537aA0393B4667B9824a72";
 export const MINTING_TOKEN_NAME = "USDtb";
 export const MINTING_TOKEN_URL = IS_PROD
-  ? "https://public.api.usdtb.money/"
-  : "https://public.api.staging.usdtb.money/";
+  ? "https://public.api.usdtb.money"
+  : "https://public.api.staging.usdtb.money";
 
 export const PAIR_TOKENS = [
   {
